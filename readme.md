@@ -4,7 +4,25 @@ BroBot can help you workout.
 
 ## Features
 
-`brobot weights`
+`weights`: Compute the plates needed at each side of a barbell to reach the given weights.
+
+BroBot optimizes the weight combination to minimize the number of weights that need chaining between sets.
+
+This is optimized for two people sharing a workout plan that lift different weights and alternate sets.
+
+Example:
+
+```bash
+brobot weights 235 180
+
+Common plates: 5 35
+First Set:     10 45
+Second Set:    2.5 25
+```
+
+- Load a 5 lb plate and a 35 lb plate onto the barbell.
+- Load a 10 lb and 45 lb plates for the first set.
+- For the second set replace the plates from the first with those of the second.
 
 ## Installing
 
