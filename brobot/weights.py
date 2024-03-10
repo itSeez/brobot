@@ -12,7 +12,7 @@ parser.add_argument(dest='t1', type=int, help='First weight target.')
 parser.add_argument(dest='t2', type=int, help='Second weight target.')
 
 def main(t1: int, t2: int | None) -> None:
-    if t1 < bar or t2 < bar:
+    if t1 < bar or t2 < bar or t1 % 5 != 0 or t2 % 5 != 0:
         parser.print_help()
         return
 
@@ -28,6 +28,10 @@ def main(t1: int, t2: int | None) -> None:
                 first_set.append(c)
             if w == t2:
                 second_set.append(c)
+
+    if len(first_set) == 0 or len(second_set) == 0:
+        print('Unable to reach weight combination with the known plates.')
+        return
 
     costs = []
     for fs in first_set:
@@ -82,8 +86,8 @@ def print_solution(s: tuple) -> None:
     Arguments: s: A tiplet with the cost estimate as the first element and the sets of
                   weights as the second and third elements.
     """
-    a = s[1]
-    b = s[2]
+    a = sorted(s[1], reverse=True)
+    b = sorted(s[2], reverse=True)
     m = '\nCommon plates:'
     def add_number(m, n):
         if isinstance(n, float):
