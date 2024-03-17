@@ -15,9 +15,9 @@ Example:
 ```bash
 brobot weights 235 180
 
-Common plates: 5 35
-First Set:     10 45
-Second Set:    2.5 25
+Common plates: 35 5
+First Set:     45 10
+Second Set:    25 2.5
 ```
 
 - Load a 5 lb plate and a 35 lb plate onto the barbell.
