@@ -1,17 +1,13 @@
-[tool.poetry]
+[project]
 name = "BroBot"
 version = "1.1.0"
+requires-python = ">= 3.10"
+authors = [
+  {name = "Jose Alarcon", email = "jose@example.com"}
+]
 description = "A workout helper."
-license = "MIT"
-authors = ["Jose Alarcon"]
+license = {text = "MIT License"}
 readme = "readme.md"
 
-[tool.poetry.dependencies]
-python = "^3.11"
-
-[tool.poetry.scripts]
-brobot = 'brobot.console:run'
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[project.scripts]
+brobot = "brobot.console:run"
