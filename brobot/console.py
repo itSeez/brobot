@@ -4,18 +4,13 @@ from . import weights
 
 def run():
     parser = argparse.ArgumentParser(description='BroBot: A workout helper.')
-    parser.add_argument(dest='command', choices=['weights'], help='BroBot command.')
-    parser.add_argument('vars', nargs='*', help='Command arguments.')
+    subcommands = parser.add_subparsers(dest='command', required=True)
+    weights_parser = subcommands.add_parser(
+        'weights',
+        parents=[weights.parser],
+        description=weights.parser.description,
+        help='Compute the plates needed for two weight targets.',
+    )
+    weights_parser.set_defaults(func=lambda args: weights.main(args.t1, args.t2))
     args = parser.parse_args()
-
-    match args.command:
-        case 'weights':
-            if len(args.vars) == 2:
-                t1 = int(args.vars[0])
-                t2 = int(args.vars[1])
-                weights.main(t1, t2)
-            else:
-                weights.parser.print_help()
-                return
-        case _:
-            parser.print_usage()
+    args.func(args)

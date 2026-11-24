@@ -5,13 +5,13 @@ from itertools import combinations
 bar = 45
 plates = [0, 2.5, 5, 10, 25, 35, 45]
 
-parser = argparse.ArgumentParser(description=f'Compute the plates needed at each side \
-    of a barbell to reach the given weights. All wights must be multiples of 5 and a \
+parser = argparse.ArgumentParser(add_help=False, description=f'Compute the plates needed at each side \
+    of a barbell to reach the given weights. All weights must be multiples of 5 and a \
     minimum of {bar}.')
 parser.add_argument(dest='t1', type=int, help='First weight target.')
 parser.add_argument(dest='t2', type=int, help='Second weight target.')
 
-def main(t1: int, t2: int | None) -> None:
+def main(t1: int, t2: int) -> None:
     if t1 < bar or t2 < bar or t1 % 5 != 0 or t2 % 5 != 0:
         parser.print_help()
         return
@@ -79,6 +79,16 @@ def cost(a: tuple, b: tuple) -> int:
         c += lb[b]
     return c
 
+def minimize_plates(group: tuple) -> tuple:
+    """Replace a group with fewer known plates while preserving its total weight."""
+    target = sum(group)
+    available = [plate for plate in plates if plate > 0]
+    for size in range(len(group)):
+        for candidate in combinations(available, size):
+            if sum(candidate) == target:
+                return candidate
+    return group
+
 def print_solution(s: tuple) -> None:
     """Print the solution and split the plates that are common from the plates that are
     unique to each set.
@@ -86,41 +96,26 @@ def print_solution(s: tuple) -> None:
     Arguments: s: A tiplet with the cost estimate as the first element and the sets of
                   weights as the second and third elements.
     """
-    a = sorted(s[1], reverse=True)
-    b = sorted(s[2], reverse=True)
-    m = '\nCommon plates:'
-    def add_number(m, n):
-        if isinstance(n, float):
-            m += f' {n:.1f}'
-        elif n == 0:
-            pass
-        else:
-            m += f' {n}'
-        return m
-    to_print_a = count(a)
-    to_print_b = count(b)
-    for w in a:
-        if w in b:
-            other = to_print_b
-            target = to_print_a
-            if to_print_a[w] > to_print_b[w]:
-                other = to_print_a
-                target = to_print_b
-            while target[w]:
-                m = add_number(m, w)
-                other[w] -= 1
-                target[w] -= 1
-    m += '\nFirst Set:    '
-    for w in a:
-        while to_print_a[w]:
-            m = add_number(m, w)
-            to_print_a[w] -= 1
-    m += '\nSecond Set:   '
-    for w in b:
-        while to_print_b[w]:
-            m = add_number(m, w)
-            to_print_b[w] -= 1
-    print(m)
+    first = list(s[1])
+    second = list(s[2])
+    common = []
+    for plate in s[1]:
+        if plate in second:
+            common.append(plate)
+            first.remove(plate)
+            second.remove(plate)
+
+    lines = []
+    for label, group in (
+        ('Common plates:', common),
+        ('First Set:    ', first),
+        ('Second Set:   ', second),
+    ):
+        optimized = minimize_plates(tuple(group))
+        values = ''.join(f' {plate:g}' for plate in sorted(optimized, reverse=True) if plate)
+        lines.append(label + values)
+    print('\n' + '\n'.join(lines))
 
 if __name__ == '__main__':
-    main()
+    args = argparse.ArgumentParser(parents=[parser]).parse_args()
+    main(args.t1, args.t2)
